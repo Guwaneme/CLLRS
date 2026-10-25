@@ -1,0 +1,183 @@
+\documentclass[lettersize,journal]{IEEEtran}
+\usepackage{amsmath,amsfonts,amssymb}
+\usepackage{algorithmic}
+\usepackage{algorithm}
+\usepackage{array}
+\usepackage[caption=false,font=normalsize,labelfont=sf,textfont=sf]{subfig}
+\usepackage{textcomp}
+\usepackage{stfloats}
+\usepackage{url}
+\usepackage{verbatim}
+\usepackage{graphicx}
+\usepackage{color}
+% \usepackage{appendix}
+\usepackage{cite}
+\newcommand{\parab}[1]{\noindent\textbf{#1} }
+\newenvironment{proof}{{\noindent\it Proof:} }{\hfill $\square$\par}
+\hyphenation{op-tical net-works semi-conduc-tor IEEE-Xplore} 
+
+\begin{document}
+\subsection{Proof of Lemma~1}
+\label{app:proof-key-conditioning}
+\begin{proof}
+	Before conditioning, concatenate the coefficient vectors of $(f_0,\mathbf s_0,\mathbf e)$ into $Y\in\mathbb Z^{Dn}$. Its coordinates are independent $D_{\mathbb Z,\sigma}$ samples and $\|\mathbf s\|\le2\|Y\|+1$. Moreover,
+	$\mathbb E[\exp(\|Y\|^2/(4\sigma^2))]=a_\sigma^{Dn}$. Markov's inequality bounds the unconditioned norm-rejection probability by $a_\sigma^{Dn}\exp(-(B_k-1)^2/(16\sigma^2))$. The event $f_0=0$ has probability $\rho_\sigma^{-n}$ and makes $f=1$ invertible, giving the bound in Lemma~1 of the main paper after conditioning. Finally, conditioning a distribution on an event of probability $1-\eta_k$ changes it by statistical distance $\eta_k$; passing to its public-key image cannot increase that distance.
+\end{proof}
+
+In particular, the sufficient choice
+\begin{equation}\label{eq:cyclic-key-choice}
+	B_k\ge1+4\sigma\sqrt{Dn\log a_\sigma+n\log\rho_\sigma+\lambda\log2}
+\end{equation}
+makes $\eta_k\le2^{-\lambda}$. All logarithms in the parameter bounds are natural. Thus norm conditioning is bounded using the existing NTWE assumption, rather than assuming hardness of a different conditioned distribution.
+A sufficient invertibility bound is
+\begin{equation}\label{eq:cyclic-invertibility}
+	\Pr[f\in\mathcal R_q^\times]\ge
+	1-n\left(\frac1{\sqrt{2\pi}\sigma}+\frac1q\right).
+\end{equation}
+Indeed, conditional on all nonconstant coefficients of $f_0$, divisibility by a fixed irreducible factor permits at most one residue for its constant coefficient. The Gaussian mass of any residue class modulo $q$ is at most $1/(\sqrt{2\pi}\sigma)+1/q$: its unnormalised mass is at most $1+\sqrt{2\pi}\sigma/q$, while Poisson summation gives $\rho_\sigma\ge\sqrt{2\pi}\sigma$. A union bound over at most $n$ factors proves the inequality. Whenever positive, this bound can be used for $\tau$ below; in particular $\sigma\ge n$ and $q>2n+1$ give $\tau>1/10$. A sharper invertibility estimate may be used for a selected parameter suite.
+
+For bounded-time reductions, let $\tau$ be an inverse-polynomial lower bound on the invertibility probability in KeyGen. Truncate each secret-generation loop after
+\[
+L_k=\left\lceil\frac{\lambda\log2+\log(4U)}{\tau(1-2^{-\lambda})}\right\rceil
+\]
+trials. Across the two runs of a reduction and at most $2U$ base/auxiliary tuples per run, the additional failure probability is $\delta_{\rm kg}\le2^{-\lambda}$. This cutoff bounds the number of secret-generation trials. On reaching it a bounded implementation returns $\perp$ and a reduction aborts; the resulting event is charged to $\delta_{\rm kg}$. Outside that event the sampled-key distribution agrees with the mathematical construction. In bounded reductions and their corresponding bounded realisation, a repeated base matrix causes immediate abort rather than an unbounded matrix-regeneration loop. Its probability is already included in $\delta_{\rm col}$; outside that event the mathematical and bounded algorithms agree on the same fresh draw. The cost of each sampling operation is justified below.
+
+\subsection{Proof of Lemma~2}
+\label{app:proof-normal-msis}
+\begin{proof}
+	Partition a uniform challenge as $\mathbf F=[\mathbf F_0,\mathbf F_1]$, with $\mathbf F_1$ square of order $m$. Since $q$ is odd and $n$ is a power of two, $X^n+1$ is square-free. The Chinese remainder decomposition gives the stated invertibility probability $\pi_{\rm nf}$ for $\mathbf F_1$. If it is invertible, $\mathbf F_1^{-1}\mathbf F_0$ is uniform, independently of $\mathbf F_1$. Use its first column as $-\mathbf b$ and the remaining $l$ columns as $\mathbf A_0$. 
+	
+	A solution to $[\mathbf F_1^{-1}\mathbf F_0,\mathbf I_m]\mathbf x=0$ also satisfies $\mathbf F\mathbf x=0$. Only the matrix is multiplied; the solution and its norm are unchanged. The lower bound follows by a union bound, using $\sum_t f_t=n$ and $\sum_{a\ge1}q^{-a}=1/(q-1)$.
+\end{proof}
+
+\subsection{Proof of Lemma~3}
+\label{app:proof-cyclic-transcripts}
+\begin{proof}
+	For a fixed incoming challenge $c_j$ of weight $k$, the IRS transition identity of Definition 2 gives response subprobability mass $M^{-k}D_{\mathcal R,r}^{D}(\mathbf z_j)$. The weight coin contributes $M^{k-d}$; the norm check restricts this mass to $\|\mathbf z_j\|\le B_s$. The original commitment is determined by
+	$\mathbf w_j=\mathbf A_j^T\mathbf z_j-qc_j\mathbf e_1\pmod{2q}$,
+	also for signed internal IRS transitions. Summing over these transitions and using the independent branch answers gives, for any fixed challenges and responses, the accepting subprobability mass
+	\begin{equation}\label{eq:cyclic-ideal-mass}
+		p\,h^{-N}\prod_{i=1}^{N}D_{r,B_s}(\mathbf z_i).
+	\end{equation}
+	Its sum is $p$; division by $p$ proves the stated conditional law. The commitments, and hence the unordered set of oracle input--output pairs, follow deterministically from these challenges and responses. Internal query order is not part of the returned signature.
+	
+	A witness-free simulator therefore samples all $c_i\leftarrow\mathcal U(\mathcal C_d)$ and $\mathbf z_i\leftarrow D_{r,B_s}$ independently, computes every $\mathbf w_i$, and installs the pairs $(C,i,\mathbf w_i)\mapsto c_{i+1}$ with $c_{N+1}=c_1$. Only $c_1$ and the responses are returned. For the auxiliary record it samples $c^a,\mathbf z^a$ independently and installs its one verification pair. This describes the accepting law in the independent-challenge experiment. It does not assert the same exact law after conditioning a real random-oracle execution on fresh queries; conflicts with an existing table are handled in Lemma~4.
+\end{proof}
+
+\subsection{Proof of Lemma~4}
+\label{app:proof-rom-simulation}
+\begin{proof}
+	We fix all generated secrets when bounding the sampling probabilities. Modulo 2, the first component of a reconstructed commitment is $z_0-c$. Any specified parity vector of an unconditioned Gaussian polynomial has probability at most $((1+\delta_r)/2)^n$. Conditioning a response on its norm ball increases this bound by at most $1/p_B$. A true first commitment uses an unconditioned fresh mask, so it also has point probability at most $\theta$. These bounds hold for every fixed key and incoming challenge, including public keys used in a hybrid game.
+	
+	Compare the following experiments without conditioning any of their distributions on absence of a conflict.
+	
+	First replace each signing attempt by the independent-challenge experiment, retaining all its queried inputs and answers, including those of rejected attempts. The local answers are installed in a private copy of the persistent table; an existing entry is overwritten in this comparison experiment. Until an internal query meets an existing input, this experiment and the real one can use the same randomness and have identical tables and outputs. There are at most $S$ internal commitment inputs. At their creation, a fresh mask or response has the preceding point bound conditional on the past. Comparing each with at most $Q+S$ earlier entries gives conflict probability at most $S(Q+S)\theta$. Indices distinguish branches within the same attempt.
+	
+	Before deleting these entries, analytically continue any independent-challenge stage beyond $L$ trials until it accepts. This is a comparison experiment, not the reduction's implementation. Its probability of needing that continuation in any call is at most $2V(1-p)^L=\delta_{\rm cap}$. We charge this event separately and track only the first $L$ attempts of each stage in the collision counts below. We do not condition those counts on absence of the continuation event.
+	
+	Next remove entries belonging to rejected attempts, keeping them only as private records for the comparison. A difference can become visible only if an input of such a record is encountered again, either internally or by an external query. In this experiment the oracle table used for future public queries excludes those records. Conditional on the context and secrets, independent-challenge attempts use independent randomness, and Lemma~3 makes their accepting records independent of the number and contents of preceding rejected attempts. Attempt counts and temporary masks are not returned by the signing oracle or retained in the signing key. Later public choices, including corruption responses, therefore contain no information about these private records.
+	
+	For clarity, let $R_a$ be rejection of the $a$th attempt of a fixed stage, and let $W_a$ be one of its commitment inputs. For any fixed possible input $x$,
+	\[
+	\Pr[W_a=x\mid R_a]\le\frac{\theta}{1-p}
+	\quad\text{when }p<1.
+	\]
+	The event that position $a$ is reached and rejected has probability $(1-p)^a$. Thus its contribution to any later query chosen without those private records is at most $(1-p)^{a-1}\theta\le\theta$. This also holds on conditioning on the eventual successful record in the continued experiment, since that record is independent of all preceding rejected attempts; no conditioning on completion within $L$ is made. When $p=1$ there are no rejected records. Equivalently, the basic weighted bound is $\Pr[R_a]\Pr[W_a=x\mid R_a]=\Pr[W_a=x,R_a]\le\Pr[W_a=x]$, not equality with the unconditioned mass. Summing over at most $S$ private inputs and $Q+S$ possible later encounters adds at most $S(Q+S)\theta$. This sum is evaluated in the experiment with the private records erased, so adaptively chosen future inputs are independent of their contents conditional on the stated public data.
+	
+	By~\eqref{eq:cyclic-ideal-mass}, the successful challenges and responses have exactly the simulator's law, independent of the retry count. These accepting records can now be sampled directly, without generating any rejected attempts or performing the analytical continuation. A signing call does not interleave with external oracle queries, so installing its successful pairs together instead of in its internal query order leaves the resulting table unchanged outside conflicts.
+	
+	Finally require all these successful programming inputs to be absent from the existing public table. In the accepting experiment each $\mathbf z_i$ is fresh and independent of all incoming challenges and the previous public table. Each commitment therefore has point probability at most $\theta$, and the auxiliary record satisfies the same bound conditional on the ring record. This step costs at most $S(Q+S)\theta$. The three conflict bounds are together no larger than the simulation-error bound in Lemma~4 of the main paper. Previously published accepting entries are retained throughout; subsequent queries to them are ordinary repeated queries and are never counted as private-record collisions. This completes the coupling of the full adaptive views.
+\end{proof}
+
+For the response norm, the same Gaussian moment calculation gives
+\[
+1-p_B\le a_r^{Dn}\exp(-B_s^2/(4r^2)).
+\]
+Consequently the sufficient choice
+\begin{equation}\label{eq:cyclic-response-choice}
+	B_s\ge2r\sqrt{Dn\log a_r+\lambda\log2}
+\end{equation}
+makes $p_B\ge1-2^{-\lambda}$. Poisson summation gives
+$\delta_r\le2e^{-\pi^2r^2/2}/(1-e^{-4\pi^2r^2})<1/4$ for $r\ge1$. With $n\ge d\ge\lambda\ge2$, it follows that $\theta\le2(5/8)^n$, which is negligible. This derives the simulation entropy bound from the specified samplers and norm bound.
+
+The exact distributions above can be realised to negligible statistical error with bounded polynomial running time. For this statement the parameter family has polynomially bounded $n,D,r,B_k,B_s,\sigma,\sigma^{-1}$ and polynomial bit length for $q$ and the rational sampling parameters. For a precision integer $b$, each sampling operation below has conditional total-variation error at most $2^{-b}$ uniformly over its inputs. Let $R$ bound the sum of these operations over all exact/finite-precision comparisons in one reduction, including both fork runs. Adaptive sequential coupling then gives the total error budget
+\begin{equation}\label{eq:cyclic-sampling-error}
+	\delta_{\rm samp}\le R2^{-b}.
+\end{equation}
+Here $R$ is polynomial after the cutoffs $L,L_k$, since each proof uses only a fixed number of such comparisons. Before using an analytical experiment as a computational reduction, we replace its samplers by these bounded-time versions and charge the comparison to~\eqref{eq:cyclic-sampling-error}. Forking is applied to the resulting bounded-time algorithm. This budget includes numerical evaluation and bounded random draws, rather than only the number of signing attempts.
+
+To see existence of such samplers, truncate a one-dimensional Gaussian of width $t\in\{r,\sigma\}$ at
+\[
+H_t=\left\lceil\max\left\{1,\ t\sqrt{2((b+3)\log2+\log(1+t^2))}\right\}\right\rceil.
+\]
+Its discarded mass is at most $2t^2H_t^{-1}\exp(-H_t^2/(2t^2))\le2^{-b-2}$. The remaining polynomially many weights can be evaluated and sampled with a rational cumulative table; choosing enough guard bits allocates the remaining error to rounding and finite random draws. A $D_{r,B_s}$ sampler rejects Gaussian vectors outside the ball. Under~\eqref{eq:cyclic-response-choice}, $p_B\ge1/2$, so $b+3$ vector trials give failure probability at most $2^{-b-3}$; coordinate precision is increased by $O(\log((b+3)Dn))$ to bound their joint error.
+
+For IRS, every occurrence of $S_{\mathbf v}(\mathbf a)$ in Definition 2 has $\langle\mathbf a,\mathbf v\rangle\ge-\|\mathbf v\|^2$. Its summands have absolute values
+\[
+t_h=\exp\left(-\frac{h^2\|\mathbf v\|^2+2h\langle\mathbf a,\mathbf v\rangle}{2r^2}\right).
+\]
+For $h\ge1$ they decrease, since $t_{h+1}/t_h\le\exp(-(2h-1)\|\mathbf v\|^2/(2r^2))$. As $\mathbf v$ is a nonzero integer vector, the alternating remainder after terms $0,\ldots,H$ obeys
+\begin{equation}\label{eq:cyclic-irs-truncation}
+	\left|S_{\mathbf v}(\mathbf a)-\sum_{h=0}^{H}(-1)^ht_h\right|
+	\le\exp\left(-\frac{H^2-1}{2r^2}\right).
+\end{equation}
+Taking $H\ge\lceil\sqrt{1+2r^2(b+5)\log2}\rceil$ bounds this error by $2^{-b-5}$. This is a direct truncation argument for the IRS probabilities~[18, Lemma~2]. Their largest summands are at most $\exp(B_k^2/(2r^2))$, so polynomially many guard bits suffice even when cancellation occurs. The exponentials and the explicit constant $M$ can likewise be evaluated to the required precision in polynomial time. If each computed probability has absolute error at most $\varepsilon$, clamp the first to $[0,1]$, obtaining $\widehat F$, and the second to $[0,1-\widehat F]$, obtaining $\widehat J$. Their errors are at most $\varepsilon$ and $2\varepsilon$, so the three-outcome distribution has total-variation error at most $3\varepsilon$. For $\varepsilon=2^{-b-4}$, a categorical draw using $b+4$ random bits adds at most $2\varepsilon$. With the error budget split between the series, arithmetic and categorical draw, each transition differs by at most $2^{-b}$. The weight coin is handled in the same way. For a uniform draw from a finite set $\Omega$ of size $J$, use an injective indexing by $\{0,\ldots,J-1\}$. For $J=1$ return its unique element. Otherwise draw a fresh $\lceil\log_2J\rceil$-bit integer and accept it only if it is below $J$, for at most $b+2$ trials. Reaching the cutoff returns $\perp$ and aborts the reduction or bounded implementation. Each trial accepts with probability greater than $1/2$, so cutoff failure is at most $2^{-b-2}$. For every accepted value, the probability of first accepting it at any given trial is the same. Thus, conditional on success, the result is exactly uniform, and the success flag is independent of that value. Charge the cutoff comparison to the per-operation budget in~\eqref{eq:cyclic-sampling-error}. Use this sampler for all local uniform matrices, vectors, masks, challenges and other finite uniform draws. In particular, local MSIS normal-form instances must not be generated by biased modular reduction. This maintains the exact exchangeability needed for the single-instance embedding below, while Gaussian and IRS sampling retain their separate finite-precision comparisons. Intermediate vectors have polynomial bit length after the Gaussian cutoff and at most $d$ signed shifts. Thus this argument establishes a polynomial-time finite-precision realisation. Choosing $b=\lambda^2$ makes~\eqref{eq:cyclic-sampling-error} negligible for polynomial budgets.
+
+\subsection{Proof of Lemma~5}
+\label{app:proof-commitment-extraction}
+\begin{proof}
+	Subtracting their reconstruction equations gives
+	\[
+	\mathbf A_k^T\mathbf x=q(c_k-c_k')\mathbf e_1\pmod{2q}.
+	\]
+	The right side is nonzero because a differing binary coefficient has difference $1$ or $-1$. Hence $\mathbf x\ne0$. Reducing modulo $q$ and dividing by the invertible scalar $2$ yields $[-\mathbf b_k^T,\mathbf A_{0,k},\mathbf I_m]\mathbf x=0$. The triangle inequality gives $\|\mathbf x\|\le2B_s<q$, so this integer vector is also nonzero modulo $q$. No inverse of $c_k-c_k'$ is used.
+\end{proof}
+
+\subsection{Proof of Lemma~6}
+\label{app:proof-cyclic-fork}
+\begin{proof}
+	For each accepting output let $t_i$ index the first assignment of $(C,i,\mathbf w_i)$, whose answer is $c_{i+1}$. If $N>1$, these inputs are distinct and some $k$ satisfies $t_k<t_{k-1}$: the contrary inequalities would form a strict cycle. Choose the least such $k$, and put $u=t_k$, $v=t_{k-1}$. For $N=1$ use $u=v=t_1$. This is the query-order argument underlying cyclic ring-signature proofs.\footnote{M.~Abe, M.~Ohkubo, and K.~Suzuki, ``1-out-of-n signatures from a variety of keys,'' in \emph{Proc. Int. Conf. Theory Appl. Cryptol. Inf. Secur. (ASIACRYPT)}. Springer, 2002, pp.~415--432.}
+	
+	Before running the adversary, choose $\widehat u\leftarrow\mathcal U(\{1,\ldots,Q\})$. Output the decisive index $v$ only on success with $u=\widehat u$, and output 0 otherwise. This wrapper succeeds with probability $a=\epsilon/Q$. The general forking lemma\footnote{M.~Bellare and G.~Neven, ``Multi-signatures in the plain public-key model and a general forking lemma,'' in \emph{Proc. 13th ACM Conf. Comput. Commun. Secur. (CCS)}. ACM, 2006, pp.~390--399, Lemma~1.} keeps the same random tape and all answers before $v$, replaces the answer at $v$ and all later answers by independent samples, and yields two successful outputs with the same decisive index $v$ and different answers with probability at least $\mathcal F_Q(a)$.
+	
+	Both runs use the same $\widehat u$. Since $u\le v$, query $u$, including its input, is the same in both runs; equality also holds when $u=v$ because the query is formed before its answer. That input fixes $C,k,\mathbf w_k$, while query $v$ supplies the two different input challenges $c_k,c_k'$. Lemma~5 applies. This guessing step prevents the second forgery from selecting a different extraction commitment. Queries first made by final verification are included, so the argument does not assume that the adversary queried every branch before outputting its record.
+	
+	For the forking lemma, only fresh unprogrammed replies are taken from its uniform answer sequence. Signing-programming coins and the randomness of other oracle domains belong to the fixed random tape. Repeated or programmed queries use their tables and consume no new answer. A fresh forgery context has no such programmed branch input, as required by the statement.
+\end{proof}
+
+\subsection{Proof of Lemma~7}
+\label{app:proof-auxiliary-authentication}
+For clarity, define the auxiliary primitive independently of the ring registry. $\mathrm{AuxKeyGen}$ is the independent auxiliary generation step of KeyGen and returns $(T,\mathbf s^a)$. For a canonical message $M_A$, $\mathrm{AuxSign}$ runs at most $L$ attempts, sampling $\mathbf y^a\leftarrow D_{\mathcal R,r}^D$, setting $\mathbf w^a=A(T)\mathbf y^a\bmod2q$ and $c^a=H_A(M_A,A(T),\mathbf w^a)$, and applying the same signed IRS transitions, weight coin $M^{\mathrm{wt}(c^a)-d}$ and response-norm check as Algorithm~1 in Section~V of the main paper. It returns $(c^a,\mathbf z^a)$ on acceptance and $\perp$ at the cap. $\mathrm{AuxVerify}$ checks canonical encodings, $c^a\in\mathcal C_d$, $\|\mathbf z^a\|\le B_s$, and
+\[
+H_A(M_A,A(T),A(T)\mathbf z^a-qc^a\mathbf e_1)=c^a,
+\]
+where the reconstructed commitment is reduced modulo $2q$. The EUF-CMA challenger maintains a request list $\mathsf{ReqList}_A$: every canonical signing message is inserted before running AuxSign, even if it returns $\perp$. A winning output verifies and has $M_A^*\notin\mathsf{ReqList}_A$. No target auxiliary secret is disclosed in this primitive's game.
+
+In the main construction $M_A=(C,\sigma_R)$. A core failure makes no auxiliary request. A successful core followed by auxiliary failure adds $M_A$ only to $\mathsf{ReqList}_A$ and returns $\perp$ externally. A fully successful call also adds the complete record to $\mathsf{SignList}$. Capped failures, including the middle case, are charged to $\delta_{\rm cap}$ in the main reductions, together with the other comparison events in $\Delta$. This is the explicit interface between the two freshness conventions.
+
+\begin{proof}
+	Charge all exact/finite-precision and key-generation-cutoff comparisons in this reduction together to $\delta_{\rm samp}+\delta_{\rm kg}$. In the exact-distribution comparison, replace signing responses by the singleton simulator, costing at most $\delta_{\rm sim}+\delta_{\rm cap}$. Replace its norm-conditioned public key first by the unconditioned NTWE key, at cost $\eta_k$, and then by a uniform $(\mathbf A_0,\mathbf b)$, at cost at most $\epsilon_{\rm N}$. The reduction embeds the NTWE challenge as that key; all signing queries are answered without its secret. This compares complete simulated games, not the marginal key distribution alone.
+	
+	Use the bounded-time version of the uniform-key simulator for extraction, with its comparison error included in the sampling budget above. An accepted forgery on a fresh auxiliary message has a decisive input not programmed for a signing response. Complete verification and fork this input. The singleton case needs no guess of $u$, so the fork probability is at least $\mathcal F_Q(a)$, where $a$ is the forgery probability in this bounded-time uniform-key game. Lemmas~5 and~2 imply $\mathcal F_Q(a)\le\epsilon_{\rm M}/\pi_{\rm nf}$. The inverse form of the general forking bound is $a\le Q/h+\sqrt{Q\epsilon_{\rm M}/\pi_{\rm nf}}$. Adding the distribution and simulation errors proves the bound in Lemma~7 of the main paper.
+\end{proof}
+
+\subsection{Proof of Lemma~8}
+\label{app:proof-new-tag}
+\begin{proof}
+	Use $U$ independent uniform normal-form instances $(\mathbf A_{0,i}^*,\mathbf b_i^*)$. At each join use $\mathbf A_{0,i}^*$ as the base matrix, generate the original bounded secret locally, and compute its honest $\mathbf b_i$. Generate its auxiliary key locally too. Thus every corruption and every actual signing query can be answered with the real secrets. The vectors $\mathbf b_i^*$ are kept unused initially.
+	
+	Guess $\widehat g\in\{1,\ldots,K\}$ before the run. At the first query in the guessed group $(eid^*,T^*)$, and lazily for subsequent joins in this event, assign for every credential whose own tag differs from $T^*$
+	\[
+	G(eid^*,\mathbf A_{0,i}^*,T^*)
+	=\bar{\mathbf b}_i-\mathbf b_i^*\pmod q.
+	\]
+	Its own-tag mask is assigned normally. At the group's first occurrence no value in that group has previously been returned. Each selected value is uniform conditional on the known original key and registration data, because its unused $\mathbf b_i^*$ is uniform. Later queries return that same value. Later joins are treated identically unless an earlier query predicted their independently sampled base matrix, an event covered by $\delta_{\rm col}$. This produces the real joint distribution outside those collision events even when all original secrets are disclosed.
+	
+	Before answering a ring hash query with a valid registered context, evaluate the public masks of its event, ring and tag. Do the same during final verification. Independence of $G$ and $H_R$ permits these extra calls without changing any visible answer. It ensures that the relevant group is assigned before every branch query used for extraction. A valid context queried before a future member joins would have to predict that member's base matrix; this is also a counted collision event.
+	
+	Select an accepted new-tag output by a fixed ordering. On correctly guessing its group, every matrix in its final ring has $\mathbf b_i^{T^*}=\mathbf b_i^*$. No oracle signing response has this context: real signers use their own stored tags and must belong to the requested ring. This remains true if $T^*$ belongs to a corrupted user outside the final ring. Apply Lemma~6, including the group match in the wrapper's success predicate. Its probability is at least $a=(\epsilon_F-\delta_{\rm col}-\delta_{\rm kg}-\delta_{\rm samp})_+/(KQ)$, including the key-generation cutoff and the finite-precision coupling error.
+	
+	The common extraction query fixes the ring, event and tag, and hence the guessed group. Both accepted records therefore use the same embedded matrix at the extracted position. This gives a solver for one of the $U$ uniform instances with probability at least $\mathcal F_Q(a)$. To obtain a single-instance solver, place its challenge at a uniformly guessed position among $U$ otherwise identically distributed instances; the unknown target position is hidden from the adversary. The loss is at most $U$. To justify this statement also for the bounded algorithm, generate every local normal-form instance with the conditionally exact uniform sampler above and abort on any initialization cutoff. Conditional on successful initialization, all $U$ instances are independent and identically distributed; the cutoff flags are independent of the accepted values. Lemma~2 gives the same exact law for the instance derived from the single external challenge. The initialization sampling tapes are discarded and are not consulted by the multi-instance algorithm. Its subsequent coins are sampled independently. The randomly chosen external-challenge position is consequently independent of the entire instance array and all subsequent coins used in both fork runs. The multi-instance algorithm uses only this array and those coins, not the external-challenge position. Conditional on any successful two-run extraction, the extracted instance is therefore the external one with probability exactly $1/U$. Later Gaussian approximations and any bounded aborts do not distinguish positions because the same algorithm is applied to every instance. Initialization cutoff error is already charged to $\delta_{\rm samp}$ in the lower bound on $a$ before forking. Thus $\mathcal F_Q(a)\le U\epsilon_{\rm M}/\pi_{\rm nf}$, without an omitted post-fork position-hiding error. Inverting the fork bound gives the bound in Lemma~8 of the main paper. Notice that no NTWE-to-uniform switch of a corrupted original key was used.
+\end{proof}
+	
+\end{document}
