@@ -1,0 +1,94 @@
+\documentclass[lettersize,journal]{IEEEtran}
+\usepackage{amsmath,amsfonts,amssymb}
+\usepackage{algorithmic}
+\usepackage{algorithm}
+\usepackage{array}
+\usepackage[caption=false,font=normalsize,labelfont=sf,textfont=sf]{subfig}
+\usepackage{textcomp}
+\usepackage{stfloats}
+\usepackage{url}
+\usepackage{verbatim}
+\usepackage{graphicx}
+\usepackage{color}
+% \usepackage{appendix}
+\usepackage{cite}
+\newcommand{\parab}[1]{\noindent\textbf{#1} }
+\newenvironment{proof}{{\noindent\it Proof:} }{\hfill $\square$\par}
+\hyphenation{op-tical net-works semi-conduc-tor IEEE-Xplore} 
+
+\begin{document}
+\subsection{Finite-budget operation count}
+\label{app:budget-count}
+One approximate operation is a scalar Gaussian or finite uniform draw, one
+complete three-outcome IRS transition, or one weight coin. Its error includes
+the numerical evaluation needed for that draw and all of its bounded random
+draws. Guard bits are allocated within an operation so that its conditional
+total-variation error is at most $2^{-b}$ uniformly over the input. This is
+the premise of~\eqref{eq:cyclic-sampling-error}. A vector draw is counted
+coefficient by coefficient. A norm-conditioned Gaussian vector uses at most
+$b+3$ trials, as in the bounded sampler above; its cutoff comparison is
+included in the same allocation.
+
+A deliberately loose common operation bound is
+\begin{align*}
+	R_{\rm count}=128\bigl[&4UL_k(Dn+mln+mn+d+4)\\
+	&+S((b+3)Dn+2d+8)\\
+	&+Q(mln+mn+d+4)\bigr].
+\end{align*}
+The first term counts base and auxiliary secret trials, public-matrix
+draws, local uniform normal-form instances and initialization coins. The
+second counts every possible ring or auxiliary branch attempt, its bounded
+Gaussian-vector trials, at most $d$ IRS transitions and the weight coin.
+The last term overcounts all oracle outputs coefficient by coefficient,
+including deterministic programmed entries and all $UK$ bulk installations.
+All repeated and preprocessing queries were already included in $Q$.
+
+The factor 128 provides common slack for the bounded sampler-bearing
+comparison games and their couplings. There are at most eight such
+versions in a displayed subreduction: real signing, capped independent
+challenges, private rejected entries erased, direct accepting simulation,
+norm-conditioned keys, unconditioned NTWE keys, uniform keys and the
+normal-form extraction game. Either candidate hybrid in anonymity and
+either primitive branch in unforgeability may each be charged separately;
+$8\cdot2\cdot2<128$. Replaying a fork is already included in the aggregate
+resource bounds, so it is not an omitted extra execution. The unbounded
+analytical continuation used only in the simulation coupling is not run
+by a computational reduction, and its cutoff event is charged to
+$\delta_{\rm cap}$ instead. The count also covers the simpler bounded
+versions that skip rejected signing trials.
+
+For the illustration in Section~VII-B1 of the main paper, exact integer evaluation gives
+$R_{\rm count}<2^{75}<R=2^{88}$. For the wider query envelope considered below,
+the maximum count is still below $2^{88}$. Thus the same value of $R$ can
+be used in both comparisons. 
+
+\subsubsection{Conditional numerical error propagation}
+For the finite-budget illustration in Section~VII-B1 of the main paper, the operation count
+above with $R=2^{88}$ gives
+$\delta_{\rm samp}\le2^{-232},2^{-296},2^{-360}$, conditionally on the
+per-operation total-variation premise. The new-tag hash-guessing term
+$KQ^2/2^d$ is exactly $2^{-140},2^{-220},2^{-372}$. After propagating all
+comparison terms through Theorems 1--4, the sum of their four non-hardness
+parts is below $2^{-138},2^{-218},2^{-304}$, respectively. These figures
+include the tighter candidate norm-tail and invertibility bounds, the
+key-generation and signing cutoffs, oracle simulation, collisions and
+finite-precision comparisons.
+
+For example, in this envelope the coefficient of $\sqrt{\epsilon_{\rm M}}$
+in the new-tag bound is about $2^{121.03}$, and the NTWE coefficient in the
+anonymity bound is $2^{33}$. To make each of these contributions at most a
+quarter of $2^{-t}$, sufficient primitive bounds for $t=120,180,256$ are
+$\epsilon_{\rm N}\le2^{-155},2^{-215},2^{-291}$ and
+$\epsilon_{\rm M}\le2^{-487},2^{-607},2^{-759}$, respectively, at the
+augmented reductions' running times. These required advantage bounds use the conditional interpretation in Section~VII-B1 of the main paper.
+
+The dependence on the envelope is material. With aggregate external caps
+$q_G,q_R,q_A\le2^{48}$, the same bulk accounting is valid with $K=2^{50}$
+and $Q=2^{67}$. The new-tag hash terms then become
+$2^{-96},2^{-176},2^{-328}$. Consequently the first two profiles do not
+meet their label targets even for the non-hardness part of this more
+permissive illustration. These are upper-bound limitations, not attacks.
+The accompanying executable budget check records both envelopes and every
+affected error and reduction coefficient.
+	
+\end{document}
