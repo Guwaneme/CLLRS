@@ -1,0 +1,125 @@
+\documentclass[lettersize,journal]{IEEEtran}
+\usepackage{amsmath,amsfonts,amssymb}
+\usepackage{algorithmic}
+\usepackage{algorithm}
+\usepackage{array}
+\usepackage[caption=false,font=normalsize,labelfont=sf,textfont=sf]{subfig}
+\usepackage{textcomp}
+\usepackage{stfloats}
+\usepackage{url}
+\usepackage{verbatim}
+\usepackage{graphicx}
+\usepackage{color}
+% \usepackage{appendix}
+\usepackage{cite}
+\newcommand{\parab}[1]{\noindent\textbf{#1} }
+\newenvironment{proof}{{\noindent\it Proof:} }{\hfill $\square$\par}
+\hyphenation{op-tical net-works semi-conduc-tor IEEE-Xplore} 
+
+\begin{document}
+\subsection{Sharper bounds for the finite profiles}
+\label{app:tight-profile-bounds}
+The norm choices in (1) and
+(4) are sufficient choices for the general
+parameter family. For the finite profiles we use the following sharper
+bounds for the same distributions and norm tests. They replace the
+conservative numerical sufficient conditions, without changing KeyGen or
+the security games.
+
+Write $\rho_t(c)=\sum_{z\in\mathbb Z}\exp(-(z-c)^2/(2t^2))$ and
+$\rho_t=\rho_t(0)$. Poisson summation gives
+$\rho_t(c)\le\rho_t$ and, for $t'\ge t$,
+$\rho_{t'}/\rho_t\le t'/t$. The first inequality follows by bounding
+each cosine in the dual series by one. For the second, the dual series
+$\rho_t/(\sqrt{2\pi}t)=\sum_{k\in\mathbb Z}\exp(-2\pi^2t^2k^2)$
+is decreasing in $t$.
+
+Suppose $\Pr[f\in\mathcal R_q^\times]\ge\tau>0$. For any $0<u<1$,
+put $t=u/(8\sigma^2)$. Then the key rejection probability obeys
+\begin{equation}\label{eq:tight-key-tail}
+	\begin{split}
+		\eta_k\le\tau^{-1}\exp\!\left(-tB_k^2+\frac{t}{1-u}\right)
+		&\left(\frac{\rho_{\sigma/\sqrt{1-u}}}{\rho_\sigma}\right)^n\\
+		{}\cdot&\left(\frac{\rho_{\sigma/\sqrt{1-u/4}}}{\rho_\sigma}\right)^{(D-1)n}.
+	\end{split}
+\end{equation}
+To see this, let $X\leftarrow D_{\mathbb Z,\sigma}$. Completing the
+square gives
+\[
+-\frac{X^2}{2\sigma^2}+t(2X+1)^2
+=-\frac{1-u}{2\sigma^2}
+\left(X-\frac{u}{2(1-u)}\right)^2+\frac{t}{1-u}.
+\]
+Only the constant coefficient of $f=2f_0+1$ has the shift by one.
+Its exponential moment is therefore at most
+$\exp(t/(1-u))\rho_{\sigma/\sqrt{1-u}}/\rho_\sigma$.
+Each remaining coefficient of $f$ contributes the same ratio without
+that exponential factor; each of the other $(D-1)n$ coefficients
+contributes $\rho_{\sigma/\sqrt{1-u/4}}/\rho_\sigma$.
+Markov's inequality at $B_k^2$ and division by the invertibility lower
+bound $\tau$ prove (7).
+
+For any $0<v<1$, the same exponential-moment argument and the second
+theta inequality give
+\begin{equation}\label{eq:tight-response-tail}
+	1-p_B\le
+	\exp\!\left(-\frac{vB_s^2}{2r^2}\right)(1-v)^{-Dn/2}.
+\end{equation}
+In particular this is an integer-Gaussian bound, rather than substitution
+of a continuous chi-square probability.
+
+For the three profiles $q\equiv1\pmod{2n}$ and $\rho_\sigma<2$.
+Let $\zeta\in\mathbb F_q$ have order $2n$, let
+$H=\langle\zeta\rangle$, write $[x]_q$ for the centered residue of
+$x$, and set
+\[
+E_{n,q}=\min_{a\in\mathbb F_q^\times}
+\frac1{2q^2}\sum_{x\in aH}[x]_q^2,
+\qquad p_1=\frac{\exp(-1/(2\sigma^2))}{\rho_\sigma}.
+\]
+Then an admissible invertibility lower bound is
+\begin{equation}\label{eq:tight-invertibility}
+	\tau=1-\frac nq-n\left(1-\frac1q\right)
+	\exp(-16p_1E_{n,q}).
+\end{equation}
+Indeed the characteristic function
+$\phi(s)=\mathbb E\exp(2\pi\mathrm i sX)$ is real, and
+$\phi(s)\ge2\Pr[X=0]-1>0$. Retaining the $X=\pm1$ terms gives
+\[
+0\le\phi(s)\le1-2p_1(1-\cos(2\pi s))
+\le\exp(-16p_1\operatorname{dist}(s,\mathbb Z)^2).
+\]
+For a root $\xi=\zeta^{2j+1}$ of $X^n+1$, finite Fourier inversion
+therefore bounds $\Pr[f(\xi)=0]$ by
+$q^{-1}+(1-q^{-1})\exp(-16p_1E_{n,q})$.
+Here $\{\pm\xi^k:0\le k<n\}=H$ because $n$ is a power of two.
+Thus the sum of the $n$ squared distances in each nontrivial Fourier
+product is at least $E_{n,q}$; multiplication by two only permutes the
+nonzero Fourier frequencies. A union bound over all $n$ roots proves (9).
+
+Exact coset enumeration yields
+\[
+\begin{array}{c|c|c}
+	q&\zeta&E_{n,q}\\ \hline
+	12289&10302&11932987670/302039042\\
+	15361&4989&18916242006/471920642
+\end{array}
+\]
+The fixed $(u,v)$ values used for profiles 1--3, interpreted as exact
+decimal rationals, are
+\[
+\begin{array}{c|cc}
+	&u&v\\ \hline
+	1&0.6070989879390658&0.3810220434537782\\
+	2&0.5902687398832&0.36167515955237883\\
+	3&0.6768302726631384&0.35746618525530693
+\end{array}
+\]
+The outward-rounded supplementary calculation checks
+$\eta_k\le2^{-\lambda}$, $1-p_B\le2^{-\lambda}$,
+$LM^{-d}(1-2^{-\lambda})\ge\lambda^2$, and
+$4U\exp(-\tau(1-2^{-\lambda})L_k)\le2^{-\lambda}$
+for the three profiles. This establishes the stated norm and cutoff
+inequalities for these distributions. 
+	
+\end{document}
