@@ -23,8 +23,9 @@ One approximate operation is a scalar Gaussian or finite uniform draw, one
 complete three-outcome IRS transition, or one weight coin. Its error includes
 the numerical evaluation needed for that draw and all of its bounded random
 draws. Guard bits are allocated within an operation so that its conditional
-total-variation error is at most $2^{-b}$ uniformly over the input. This is
-the premise of~\eqref{eq:cyclic-sampling-error}. A vector draw is counted
+total-variation error is at most $2^{-b}$ uniformly over the input. This is the premise of the finite-precision error bound
+$\delta_{\rm samp}\le R2^{-b}$ given in Eq.~(5) in Section~D
+of the supplementary proofs for Sections~V and~VI. A vector draw is counted
 coefficient by coefficient. A norm-conditioned Gaussian vector uses at most
 $b+3$ trials, as in the bounded sampler above; its cutoff comparison is
 included in the same allocation.
